@@ -28,7 +28,7 @@
 
 ***Features***
 
-- Seamless Tomcat 7, 8, 8.5 & 9 integration.
+- Seamless Tomcat 10 integration.
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
@@ -36,20 +36,14 @@
 
 ***Supported Containers***
 
-Tomcat Web Session Replication Module has been tested against the following containers.
-
-- Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>.
-- Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>.
-- Tomcat 9.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-90.cgi" target="_blank">here</a>.
-
-The latest tested versions are **7.0.40**, **8.0.36**, **8.5.9**, and **9.0.27**.
+The latest tested versions are **10.1.14**, **10.1.16**.
 <br></br>
 
 ***Requirements***
 
- - Tomcat instance must be running with Java 1.6 or higher.
+ - Tomcat instance must be running with Java 17 or higher.
  - Session objects that need to be clustered have to be serializable on Hazelcast cluster. Please see <a href="https://docs.hazelcast.org/docs/latest/manual/html-single/#serialization" target="_blank">here</a> for how you can configure and implement serialization for Hazelcast.
- - Hazelcast 4.0+ is supported by Hazelcast Tomcat Session Manager v2.0+.
+ - Hazelcast 5.3+ is supported by Hazelcast Tomcat Session Manager v2.3+.
 
 # How Tomcat Session Replication Works
 
@@ -121,7 +115,7 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
 1. Go to <a href="http://www.hazelcast.org/" target="_blank">hazelcast.org</a> and download the latest Hazelcast.
 2. Unzip the Hazelcast zip file into the folder `$HAZELCAST_ROOT`.
 3. Go to <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/releases" target="_blank">hazelcast-tomcat-sessionmanager</a> repository and download the latest version.
-4. Put `$HAZELCAST_ROOT/lib/hazelcast-all-`<*version*>`.jar`,   and `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
+4. Put `$HAZELCAST_ROOT/lib/hazelcast-`<*version*>`.jar`,   and `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
 
 5. Put a `<Listener>` element into the `$CATALINA_HOME$/conf/server.xml` as shown below.
 
@@ -141,10 +135,24 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
               clientOnly="true"/>
         </Context>
  ```
+7. Put the `hazelcast.xml` file in the `$CATALINA_HOME$/conf/` folder as shown below.
 
-7. Launch a Hazelcast Instance using `$HAZELCAST_ROOT/bin/server.sh` or `$HAZELCAST_ROOT/bin/server.bat`.
+ ```xml
+      <hazelcast xmlns="http://www.hazelcast.com/schema/config"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.hazelcast.com/schema/config
+                 http://www.hazelcast.com/schema/config/hazelcast-config-5.3.xsd">
+        <instance-name>hazelcastInstance</instance-name>
+        <cluster-name>dev</cluster-name>
+        <metrics>
+          <management-center />
+        </metrics>
+      </hazelcast>
+ ```
 
-7. Start Tomcat instances with a configured load balancer and deploy the web application.
+8. Launch a Hazelcast Instance using `$HAZELCAST_ROOT/bin/server.sh` or `$HAZELCAST_ROOT/bin/server.bat`.
+
+9. Start Tomcat instances with a configured load balancer and deploy the web application.
 
 ***Optional Attributes for Listener Element***
 
@@ -158,7 +166,7 @@ An example client config that connects directly (i.e. doesn't use multicast) to 
 <hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
-                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">    
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-5.3.xsd">    
 
     <network>
       <cluster-members>
